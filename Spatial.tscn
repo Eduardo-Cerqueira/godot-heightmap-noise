@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://plane.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://noise_opensimplex.png" type="Texture" id=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type spatial;
+render_mode unshaded;
+    
+uniform sampler2D source;
+uniform float height_range;
+    
+void vertex() {
+        vec2 xz = VERTEX.xz;
+        float h = texture(source, UV).g * height_range;
+        VERTEX = vec3(xz.x, h, xz.y);
+}
+	
+void fragment() {
+	ALBEDO = texture(source, UV).rgb;
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/height_range = 0.3
+shader_param/source = ExtResource( 2 )
+
+[node name="Spatial" type="Spatial"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+mesh = ExtResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.93741, 0.348228, 0, -0.348228, 0.93741, 0, 1.39628, 2.68269 )
